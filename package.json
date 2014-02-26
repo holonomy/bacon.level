@@ -1,0 +1,28 @@
+{
+  "name": "bacon.level",
+  "version": "0.0.0",
+  "description": "a leveldb plugin for bacon.js",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/holonomy/bacon.level.git"
+  },
+  "author": "ahdinosaur",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/holonomy/bacon.level/issues"
+  },
+  "dependencies": {
+    "bacon.model": "~0.1.5",
+    "lodash": "~2.4.1"
+  },
+  "devDependencies": {
+    "chai": "~1.9.0",
+    "mocha": "~1.17.1",
+    "level-live-stream": "~1.4.9",
+    "level-test": "~1.6.1"
+  }
+}
