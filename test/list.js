@@ -4,6 +4,7 @@ var List = require('../').List;
 var level = require('level-test')();
 var levelLiveStream = require('level-live-stream');
 
+
 var db = level('testdb', { encoding: 'json' });
 levelLiveStream.install(db);
 
