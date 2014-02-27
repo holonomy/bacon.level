@@ -29,7 +29,7 @@ describe('#list', function () {
         done();
         return Bacon.noMore;
       }
-    })
+    });
   });
 
   it('onValue should get new values', function (done) {
@@ -39,8 +39,8 @@ describe('#list', function () {
         return Bacon.noMore;
       }
     });
-    list.db.put(3, { id: 3, value: "test object 3" });
-  })
+    list.db.put(2, { id: 2, value: "test object 2" });
+  });
 
   it('later onValue should get existing values', function (done) {
     list.onValue(function (values) {
