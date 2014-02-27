@@ -44,7 +44,6 @@ describe('#list', function () {
 
   it('later onValue should get existing values', function (done) {
     list.onValue(function (values) {
-      console.log(values);
       if (values.length == 3) {
         done();
         return Bacon.noMore;
