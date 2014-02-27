@@ -24,3 +24,7 @@ list.onValue(console, 'log');
 
 list.db.put(1, { id: 1, value: "my other favorite object" });
 ```
+
+## test
+
+`npm i && npm test`
