@@ -1,30 +1,29 @@
-var Bacon = require('bacon.model');
+var _ = require('lodash');
 var expect = require('chai').expect;
-var List = require('../').List;
+var Bacon = require('../');
 
 var level = require('level-test')();
-var levelLiveStream = require('level-live-stream');
-
+var liveStream = require('level-livefeed');
 
 var db = level('testdb', { encoding: 'json' });
-levelLiveStream.install(db);
+liveStream.install(db);
 
-describe('#list', function () {
-  var list;
+describe('#Bacon.Level', function () {
+  var baconLevel;
 
   before(function () {
-    // add two values to db before we create list
+    // add two values to db before we create baconLevel
     db.put(0, { id: 0, value: "test object 0" });
     db.put(1, { id: 1, value: "test object 1" });
   });
 
-  it('constructor should create a new list', function () {
-    list = List(db);
-    expect(list).to.exist;
+  it('constructor should create a new bacon level', function () {
+    baconLevel = Bacon.Level(db);
+    expect(baconLevel).to.exist;
   });
 
   it('onValue should get existing values', function (done) {
-    list.onValue(function (values) {
+    baconLevel.onValue(function (values) {
       if (values.length == 2) {
         done();
         return Bacon.noMore;
@@ -33,17 +32,24 @@ describe('#list', function () {
   });
 
   it('onValue should get new values', function (done) {
-    list.onValue(function (values) {
+    baconLevel.onValue(function (values) {
       if (values.length == 3) {
         done();
         return Bacon.noMore;
       }
     });
-    list.db.put(2, { id: 2, value: "test object 2" });
+    baconLevel.db.put(2, { id: 2, value: "test object 2" });
   });
 
   it('later onValue should get existing values', function (done) {
-    list.onValue(function (values) {
+    baconLevel.flatMap(function (values) {
+      return _.find(values, function (value) {
+        return value.id === 2;
+      });
+    }).onValue(function (value) {
+      console.log("onValue", value);
+    })
+    baconLevel.onValue(function (values) {
       if (values.length == 3) {
         done();
         return Bacon.noMore;
