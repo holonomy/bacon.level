@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "bacon.model": "~0.1.5",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "streams2": "~0.1.1"
   },
   "devDependencies": {
     "chai": "~1.9.0",
