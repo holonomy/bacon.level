@@ -1,3 +1,4 @@
+var Bacon = require('bacon.model');
 var expect = require('chai').expect;
 var List = require('../').List;
 
@@ -26,6 +27,7 @@ describe('#list', function () {
     list.onValue(function (values) {
       if (values.length == 2) {
         done();
+        return Bacon.noMore;
       }
     })
   });
@@ -34,10 +36,21 @@ describe('#list', function () {
     list.onValue(function (values) {
       if (values.length == 3) {
         done();
+        return Bacon.noMore;
       }
     });
     list.db.put(3, { id: 3, value: "test object 3" });
   })
+
+  it('later onValue should get existing values', function (done) {
+    list.onValue(function (values) {
+      console.log(values);
+      if (values.length == 3) {
+        done();
+        return Bacon.noMore;
+      }
+    });
+  });
 
   after(function (done) {
     // del all objects in db
