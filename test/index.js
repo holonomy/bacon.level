@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var expect = require('chai').expect;
 var Bacon = require('baconjs');
 require('../');
