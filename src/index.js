@@ -17,27 +17,34 @@ Bacon.Level = function (db) {
     switch (change.type) {
       case undefined:
       case 'put':
-        return function put (data) {
-          var index = _.indexOf(_.pluck(data, 'id'), change.key);
-          if (index !== -1) {
-            data[index] = change.value;
+        return function put (items) {
+          console.log("put", items);
+
+          var itemIds = _.map(items, function (item) {
+            return item.get().id;
+          });
+          var keyIndex = _.indexOf(itemIds, change.key);
+
+          if (keyIndex !== -1) {
+            items[keyIndex].set(change.value);
           } else {
-            data.push(change.value);
+            items.push(Bacon.Model(change.value));
           }
-          return data;
+          return items;
         };
         break;
 
       case 'del':
-        return function del (data) {
-          return _.filter(data, function (item) {
-            return item.id !== change.key;
+        return function del (items) {
+          console.log("del", items);
+          return _.filter(items, function (item) {
+            return item.get().id !== change.key;
           });
         };
         break;
     }
 
-    return function get (data) { return data; };
+    return function get (items) { return items; };
   });
 
   // debug

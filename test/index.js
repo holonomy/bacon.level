@@ -43,18 +43,24 @@ describe('#Bacon.Level', function () {
   });
 
   it('later onValue should get existing values', function (done) {
-    baconLevel.flatMap(function (values) {
-      return _.find(values, function (value) {
-        return value.id === 2;
-      });
-    }).onValue(function (value) {
-      console.log("onValue", value);
-    })
     baconLevel.onValue(function (values) {
       if (values.length == 3) {
         done();
         return Bacon.noMore;
       }
+    });
+  });
+
+  it("should be possible to get single model from level", function (done) {
+    baconLevel.flatMap(function (values) {
+      return _.find(values, function (value) {
+        return value.get().id === 2;
+      });
+    }).onValue(function (value) {
+      expect(value).to.have.property('id', 2);
+      expect(value).to.have.property('value', "test object 2");
+      done();
+      return Bacon.noMore;
     });
   });
 
