@@ -21,7 +21,8 @@
   "dependencies": {
     "bacon.nodestream": "git://github.com/holonomy/bacon.nodestream",
     "bacon.model": "git://github.com/ahdinosaur/bacon.model#peerDeps",
-    "array.prototype.find": "~0.1.0"
+    "array.prototype.find": "~0.1.0",
+    "array.prototype.findindex": "~0.1.0"
   },
   "devDependencies": {
     "chai": "~1.9.0",

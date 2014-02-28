@@ -1,6 +1,7 @@
 var Bacon = require('bacon.model');
 require('bacon.nodestream');
 require('array.prototype.find');
+require('array.prototype.findindex');
 
 Bacon.Level = function (db) {
 
@@ -20,10 +21,9 @@ Bacon.Level = function (db) {
         return function put (items) {
           console.log("put", items);
 
-          var itemIds = items.map(function (item) {
-            return item.get().id;
+          var keyIndex = items.findIndex(function (item) {
+            return item.get().id === change.key;
           });
-          var keyIndex = itemIds.indexOf(change.key);
 
           if (keyIndex !== -1) {
             items[keyIndex].set(change.value);
