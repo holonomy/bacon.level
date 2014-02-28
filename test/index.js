@@ -1,9 +1,10 @@
 var _ = require('lodash');
 var expect = require('chai').expect;
-var Bacon = require('../');
+var Bacon = require('baconjs');
+require('../');
 
 var level = require('level-test')();
-var liveStream = require('level-livefeed');
+var liveStream = require('level-live-stream');
 
 var db = level('testdb', { encoding: 'json' });
 liveStream.install(db);

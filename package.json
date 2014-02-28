@@ -15,15 +15,19 @@
   "bugs": {
     "url": "https://github.com/holonomy/bacon.level/issues"
   },
+  "peerDependencies": {
+    "baconjs": "0.7.x"
+  },
   "dependencies": {
-    "bacon.model": "~0.1.5",
     "lodash": "~2.4.1",
-    "streams2": "~0.1.1"
+    "bacon.nodestream": "git://github.com/holonomy/bacon.nodestream",
+    "bacon.model": "git://github.com/ahdinosaur/bacon.model#peerDeps"
   },
   "devDependencies": {
     "chai": "~1.9.0",
     "mocha": "~1.17.1",
     "level-test": "~1.6.1",
-    "level-livefeed": "git://github.com/ahdinosaur/level-livefeed"
+    "level-live-stream": "~1.4.9",
+    "baconjs": "~0.7.x"
   }
 }
