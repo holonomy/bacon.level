@@ -51,12 +51,8 @@ describe('#Bacon.Level', function () {
     });
   });
 
-  it("should be possible to get single model from level", function (done) {
-    baconLevel.flatMap(function (values) {
-      return _.find(values, function (value) {
-        return value.get().id === 2;
-      });
-    }).onValue(function (value) {
+  it("get with id should return item model", function (done) {
+    baconLevel.get(2).onValue(function (value) {
       expect(value).to.have.property('id', 2);
       expect(value).to.have.property('value', "test object 2");
       done();

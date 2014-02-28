@@ -19,9 +19,9 @@
     "baconjs": "0.7.x"
   },
   "dependencies": {
-    "lodash": "~2.4.1",
     "bacon.nodestream": "git://github.com/holonomy/bacon.nodestream",
-    "bacon.model": "git://github.com/ahdinosaur/bacon.model#peerDeps"
+    "bacon.model": "git://github.com/ahdinosaur/bacon.model#peerDeps",
+    "array.prototype.find": "~0.1.0"
   },
   "devDependencies": {
     "chai": "~1.9.0",

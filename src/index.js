@@ -1,6 +1,6 @@
 var Bacon = require('bacon.model');
 require('bacon.nodestream');
-var _ = require('lodash');
+require('array.prototype.find');
 
 Bacon.Level = function (db) {
 
@@ -20,10 +20,10 @@ Bacon.Level = function (db) {
         return function put (items) {
           console.log("put", items);
 
-          var itemIds = _.map(items, function (item) {
+          var itemIds = items.map(function (item) {
             return item.get().id;
           });
-          var keyIndex = _.indexOf(itemIds, change.key);
+          var keyIndex = itemIds.indexOf(change.key);
 
           if (keyIndex !== -1) {
             items[keyIndex].set(change.value);
@@ -37,7 +37,7 @@ Bacon.Level = function (db) {
       case 'del':
         return function del (items) {
           console.log("del", items);
-          return _.filter(items, function (item) {
+          return items.filter(function (item) {
             return item.get().id !== change.key;
           });
         };
@@ -53,6 +53,18 @@ Bacon.Level = function (db) {
   })
 
   level.apply(applyStream);
+
+  var originalGet = level.get;
+  level.get = function byId (id) {
+    if (!id) { return originalGet(); }
+
+    // optimize
+    return level.flatMap(function (values) {
+      return values.find(function (item) {
+        return item.get().id === 2;
+      });
+    });
+  };
 
   return level;
 }
