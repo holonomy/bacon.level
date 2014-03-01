@@ -4,7 +4,7 @@
   "description": "a leveldb plugin for bacon.js",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha test/*.js"
+    "test": "NODE_ENV=test mocha test/*.js"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,5 @@
 var Bacon = require('bacon.model');
 require('bacon.nodestream');
-require('array.prototype.find');
-require('array.prototype.findindex');
 
 Bacon.Level = function (db) {
 
@@ -21,9 +19,7 @@ Bacon.Level = function (db) {
     if (!id) { return value; }
     // TODO optimize
     return level.flatMap(function (values) {
-      return values.find(function (item) {
-        return item.get().id === 2;
-      });
+      return values[id];
     });
   };
   level.db = db;

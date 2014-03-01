@@ -1,6 +1,7 @@
 var Bacon = require('bacon.model');
 require('bacon.nodestream');
 
+var Item = require('./item');
 var put = require('./put');
 var del = require('./del');
 
@@ -17,9 +18,8 @@ module.exports = function (db) {
       del: new Bacon.Bus(),
     };
 
-    var items = [];
+    var items = {};
     eventStream.onValue(function (data) {
-      console.log("data", data);
 
       switch (data.type) {
         case 'put':
@@ -33,7 +33,7 @@ module.exports = function (db) {
           break;
 
         case undefined:
-          items.push(Bacon.Model(data.value));
+          items = put(data)(items);
           break;
       }
     });

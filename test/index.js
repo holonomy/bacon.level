@@ -2,6 +2,8 @@ var expect = require('chai').expect;
 var Bacon = require('baconjs');
 require('../');
 
+var fixture = require('./fixture.json');
+
 var level = require('level-test')();
 var liveStream = require('level-live-stream');
 
@@ -18,18 +20,22 @@ describe('#Bacon.Level', function () {
 
   it('onValue should get new values', function (done) {
     baconLevel.onValue(function (values) {
-      if (values.length == 2) {
+      if (Object.keys(values).length == '2') {
         done();
         return Bacon.noMore;
       }
     });
-    db.put(0, { id: 0, value: "test object 0" });
-    db.put(1, { id: 1, value: "test object 1" });
+    db.put('0', fixture['0']);
+    db.put('1', fixture['1']);
   });
 
   it('onValue should get existing values', function (done) {
     baconLevel.onValue(function (values) {
-      if (values.length == 2) {
+      if (Object.keys(values).length == 2) {
+        expect(values['0'].get()).to.have.property('id', '0');
+        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
+        expect(values['1'].get()).to.have.property('id', '1');
+        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
         done();
         return Bacon.noMore;
       }
@@ -38,21 +44,18 @@ describe('#Bacon.Level', function () {
 
   it('onValue should get even more new values', function (done) {
     baconLevel.onValue(function (values) {
-      if (values.length == 3) {
+      if (Object.keys(values).length == 3) {
+        expect(values['0'].get()).to.have.property('id', '0');
+        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
+        expect(values['1'].get()).to.have.property('id', '1');
+        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
+        expect(values['2'].get()).to.have.property('id', '2');
+        expect(values['2'].get()).to.have.property('value', fixture['2'].value);
         done();
         return Bacon.noMore;
       }
     });
-    baconLevel.db.put(2, { id: 2, value: "test object 2" });
-  });
-
-  it('later onValue should get existing values', function (done) {
-    baconLevel.onValue(function (values) {
-      if (values.length == 3) {
-        done();
-        return Bacon.noMore;
-      }
-    });
+    baconLevel.db.put('2', fixture['2']);
   });
 
   it('constructor should create another bacon level', function () {
@@ -63,7 +66,13 @@ describe('#Bacon.Level', function () {
 
   it('onValue should get existing values from last session', function (done) {
     baconLevel.onValue(function (values) {
-      if (values.length == 3) {
+      if (Object.keys(values).length == 3) {
+        expect(values['0'].get()).to.have.property('id', '0');
+        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
+        expect(values['1'].get()).to.have.property('id', '1');
+        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
+        expect(values['2'].get()).to.have.property('id', '2');
+        expect(values['2'].get()).to.have.property('value', fixture['2'].value);
         done();
         return Bacon.noMore;
       }
@@ -71,13 +80,19 @@ describe('#Bacon.Level', function () {
   });
 
   it('get without id should return items', function () {
-    expect(baconLevel.get()).to.have.length(3);
+    var values = baconLevel.get();
+    expect(values['0'].get()).to.have.property('id', '0');
+    expect(values['0'].get()).to.have.property('value', fixture['0'].value);
+    expect(values['1'].get()).to.have.property('id', '1');
+    expect(values['1'].get()).to.have.property('value', fixture['1'].value);
+    expect(values['2'].get()).to.have.property('id', '2');
+    expect(values['2'].get()).to.have.property('value', fixture['2'].value);
   });
 
 
   it('get with id should return item model', function (done) {
-    baconLevel.get(2).onValue(function (value) {
-      expect(value).to.have.property('id', 2);
+    baconLevel.get('2').onValue(function (value) {
+      expect(value).to.have.property('id', '2');
       expect(value).to.have.property('value', "test object 2");
       done();
       return Bacon.noMore;

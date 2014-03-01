@@ -1,17 +1,12 @@
 var Bacon = require('bacon.model');
 
+var Item = require('./item');
+
 module.exports = function (change) {
   return function put (items) {
 
-    var keyIndex = items.findIndex(function (item) {
-      return item.get().id === change.key;
-    });
+    items[change.key] = Item(change.key, change.value);
 
-    if (keyIndex !== -1) {
-      items[keyIndex].set(change.value);
-    } else {
-      items.push(Bacon.Model(change.value));
-    }
     return items;
   };
 };
