@@ -70,6 +70,11 @@ describe('#Bacon.Level', function () {
     });
   });
 
+  it('get without id should return items', function () {
+    expect(baconLevel.get()).to.have.length(3);
+  });
+
+
   it('get with id should return item model', function (done) {
     baconLevel.get(2).onValue(function (value) {
       expect(value).to.have.property('id', 2);
