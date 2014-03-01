@@ -12,7 +12,7 @@ Bacon.Level = function (db) {
   // store value for sync get
   var value;
   level.onValue(function (val) {
-    level.value = val;
+    value = val;
   });
 
   // define sync get of value
