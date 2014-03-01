@@ -9,8 +9,10 @@ var del = require('./del');
 Bacon.Level = function (db) {
 
   var levelStream = Bacon.fromBinder(function (sink) {
-    
-    var eventStream = require('./stream')(db);
+  
+    var createReadStream = db.createLiveStream || db.createReadStream;
+    var readStream = createReadStream.call(db);
+    var eventStream = Bacon.fromNodeStream(readStream);
 
     var bus = {
       seed: new Bacon.Bus(),
@@ -19,34 +21,39 @@ Bacon.Level = function (db) {
     };
 
     var items = [];
-    var seeded = false;
     eventStream.onValue(function (data) {
-      if (!data.type) {
-        items.push(Bacon.Model(data));
-      } else {
-        if (!seeded) {
+      console.log("data", data);
+
+      switch (data.type) {
+        case 'put':
+          items = put(data)(items);
           sink(items);
-          seeded = true;
-        }
+          break;
 
-        switch (data.type) {
-          case 'put':
-            items = put(data)(items);
-            sink(items);
-            break;
+        case 'del':
+          items = del(data)(items);
+          sink(items);
+          break;
 
-          case 'del':
-            items = del(data)(items);
-            sink(items);
-            break;
-        }
+        case undefined:
+          items.push(Bacon.Model(data));
+          break;
       }
     });
 
-    return function () {}
+    eventStream.onEnd(function (data) {
+      sink(items);
+      sink(new Bacon.End());
+    });
+    var onSync = function () { sink(items); }
+    readStream.addListener("sync", onSync);
+
+    return function () {
+      readStream.removeListener("sync", onSync);
+    }
   });
 
-  var level = levelStream.toProperty();
+  var level = levelStream;
 
   level.get = function byId (id) {
     // TODO optimize
