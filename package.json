@@ -29,6 +29,6 @@
     "mocha": "~1.17.1",
     "level-test": "~1.6.1",
     "level-live-stream": "~1.4.9",
-    "baconjs": "~0.7.x"
+    "baconjs": "~0.7.6"
   }
 }
