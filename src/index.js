@@ -8,51 +8,19 @@ Bacon.Level = function (db) {
   var level = Bacon.Model([]);
   level.db = db;
   
-  var createReadStream = db.createLiveStream || db.createReadStream;
-  var readStream = createReadStream.call(db);
-  var eventStream = Bacon.fromNodeStream(readStream);
-  var applyStream = eventStream.flatMap(function (change) {
-    // debug
-    console.log("db change:", change);
-
-    switch (change.type) {
-      case undefined:
-      case 'put':
-        return function put (items) {
-          console.log("put", items);
-
-          var keyIndex = items.findIndex(function (item) {
-            return item.get().id === change.key;
-          });
-
-          if (keyIndex !== -1) {
-            items[keyIndex].set(change.value);
-          } else {
-            items.push(Bacon.Model(change.value));
-          }
-          return items;
-        };
-        break;
-
-      case 'del':
-        return function del (items) {
-          console.log("del", items);
-          return items.filter(function (item) {
-            return item.get().id !== change.key;
-          });
-        };
-        break;
-    }
-
-    return function get (items) { return items; };
-  });
+  var modFnStream = require('./live-stream')(db);
+  var valueStream = require('./read-stream')(db);
 
   // debug
-  applyStream.onValue(function (changeF) {
+  valueStream.onValue(function (objects) {
+    console.log("db objects:", objects);
+  });
+  modFnStream.onValue(function (changeF) {
     console.log("db change fn:", changeF);
-  })
+  });
 
-  level.apply(applyStream);
+  level.addSource(valueStream);
+  level.apply(modFnStream);
 
   var originalGet = level.get;
   level.get = function byId (id) {
