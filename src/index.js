@@ -36,7 +36,7 @@ Bacon.Level = function (db) {
           break;
 
         case undefined:
-          items.push(Bacon.Model(data));
+          items.push(Bacon.Model(data.value));
           break;
       }
     });
@@ -53,9 +53,18 @@ Bacon.Level = function (db) {
     }
   });
 
-  var level = levelStream;
+  var level = levelStream.toProperty();
 
+  // store value for sync get
+  var value;
+  level.onValue(function (val) {
+    level.value = val;
+  });
+
+  // define sync get of value
+  // or get item model by id
   level.get = function byId (id) {
+    if (!id) { return value; }
     // TODO optimize
     return level.flatMap(function (values) {
       return values.find(function (item) {
