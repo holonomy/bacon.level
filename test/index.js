@@ -11,15 +11,20 @@ liveStream.install(db);
 describe('#Bacon.Level', function () {
   var baconLevel;
 
-  before(function () {
-    // add two values to db before we create baconLevel
-    db.put(0, { id: 0, value: "test object 0" });
-    db.put(1, { id: 1, value: "test object 1" });
-  });
-
   it('constructor should create a new bacon level', function () {
     baconLevel = Bacon.Level(db);
     expect(baconLevel).to.exist;
+  });
+
+  it('onValue should get new values', function (done) {
+    baconLevel.onValue(function (values) {
+      if (values.length == 2) {
+        done();
+        return Bacon.noMore;
+      }
+    });
+    db.put(0, { id: 0, value: "test object 0" });
+    db.put(1, { id: 1, value: "test object 1" });
   });
 
   it('onValue should get existing values', function (done) {
@@ -31,7 +36,7 @@ describe('#Bacon.Level', function () {
     });
   });
 
-  it('onValue should get new values', function (done) {
+  it('onValue should get even more new values', function (done) {
     baconLevel.onValue(function (values) {
       if (values.length == 3) {
         done();
@@ -50,7 +55,22 @@ describe('#Bacon.Level', function () {
     });
   });
 
-  it("get with id should return item model", function (done) {
+  it('constructor should create another bacon level', function () {
+    baconLevel = Bacon.Level(db);
+    expect(baconLevel).to.exist;
+  });
+
+
+  it('onValue should get existing values from last session', function (done) {
+    baconLevel.onValue(function (values) {
+      if (values.length == 3) {
+        done();
+        return Bacon.noMore;
+      }
+    });
+  });
+
+  it('get with id should return item model', function (done) {
     baconLevel.get(2).onValue(function (value) {
       expect(value).to.have.property('id', 2);
       expect(value).to.have.property('value', "test object 2");
