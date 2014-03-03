@@ -21,10 +21,10 @@ describe('#Bacon.Level', function () {
   it('onValue should get new values', function (done) {
     baconLevel.onValue(function (values) {
       if (Object.keys(values).length == '2') {
-        expect(values['0'].get()).to.have.property('id', '0');
-        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
-        expect(values['1'].get()).to.have.property('id', '1');
-        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
+        expect(values['0'].get()).to.deep.equal(fixture['0']);
+        expect(values['0'].id).to.equal('0');
+        expect(values['1'].get()).to.deep.equal(fixture['1']);
+        expect(values['1'].id).to.equal('1');
         done();
         return Bacon.noMore;
       }
@@ -36,10 +36,10 @@ describe('#Bacon.Level', function () {
   it('onValue should get existing values', function (done) {
     baconLevel.onValue(function (values) {
       if (Object.keys(values).length == 2) {
-        expect(values['0'].get()).to.have.property('id', '0');
-        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
-        expect(values['1'].get()).to.have.property('id', '1');
-        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
+        expect(values['0'].get()).to.deep.equal(fixture['0']);
+        expect(values['0'].id).to.equal('0');
+        expect(values['1'].get()).to.deep.equal(fixture['1']);
+        expect(values['1'].id).to.equal('1');
         done();
         return Bacon.noMore;
       }
@@ -49,12 +49,12 @@ describe('#Bacon.Level', function () {
   it('onValue should get even more new values', function (done) {
     baconLevel.onValue(function (values) {
       if (Object.keys(values).length == 3) {
-        expect(values['0'].get()).to.have.property('id', '0');
-        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
-        expect(values['1'].get()).to.have.property('id', '1');
-        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
-        expect(values['2'].get()).to.have.property('id', '2');
-        expect(values['2'].get()).to.have.property('value', fixture['2'].value);
+        expect(values['0'].id).to.equal('0');
+        expect(values['0'].get()).to.deep.equal(fixture['0']);
+        expect(values['1'].get()).to.deep.equal(fixture['1']);
+        expect(values['1'].id).to.equal('1');
+        expect(values['2'].get()).to.deep.equal(fixture['2']);
+        expect(values['2'].id).to.equal('2');
         done();
         return Bacon.noMore;
       }
@@ -71,12 +71,12 @@ describe('#Bacon.Level', function () {
   it('onValue should get existing values from last session', function (done) {
     baconLevel.onValue(function (values) {
       if (Object.keys(values).length == 3) {
-        expect(values['0'].get()).to.have.property('id', '0');
-        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
-        expect(values['1'].get()).to.have.property('id', '1');
-        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
-        expect(values['2'].get()).to.have.property('id', '2');
-        expect(values['2'].get()).to.have.property('value', fixture['2'].value);
+        expect(values['0'].get()).to.deep.equal(fixture['0']);
+        expect(values['0'].id).to.equal('0');
+        expect(values['1'].get()).to.deep.equal(fixture['1']);
+        expect(values['1'].id).to.equal('1');
+        expect(values['2'].get()).to.deep.equal(fixture['2']);
+        expect(values['2'].id).to.equal('2');
         done();
         return Bacon.noMore;
       }
@@ -85,18 +85,17 @@ describe('#Bacon.Level', function () {
 
   it('get without id should return items', function () {
     var values = baconLevel.get();
-    expect(values['0'].get()).to.have.property('id', '0');
-    expect(values['0'].get()).to.have.property('value', fixture['0'].value);
-    expect(values['1'].get()).to.have.property('id', '1');
-    expect(values['1'].get()).to.have.property('value', fixture['1'].value);
-    expect(values['2'].get()).to.have.property('id', '2');
-    expect(values['2'].get()).to.have.property('value', fixture['2'].value);
+    expect(values['0'].get()).to.deep.equal(fixture['0']);
+    expect(values['0'].id).to.equal('0');
+    expect(values['1'].get()).to.deep.equal(fixture['1']);
+    expect(values['1'].id).to.equal('1');
+    expect(values['2'].get()).to.deep.equal(fixture['2']);
+    expect(values['2'].id).to.equal('2');
   });
 
 
   it('get with id should return item model', function (done) {
     baconLevel.get('2').onValue(function (value) {
-      expect(value).to.have.property('id', '2');
       expect(value).to.have.property('value', "test object 2");
       done();
       return Bacon.noMore;
@@ -105,16 +104,14 @@ describe('#Bacon.Level', function () {
 
   it('set should set item model', function (done) {
     var item = baconLevel.get('2');
-    item.set({
+    var newValue = {
       value: "crazy new test object 2",
-    });
-    item.put();
+    };
+    item.set(newValue);
     item.onValue(function (value) {
-      expect(value).to.have.property('id', '2');
-      expect(value).to.have.property('value', "crazy new test object 2");
-
-      return Bacon.noMore;
+      expect(value).to.deep.equal(newValue);
       done();
+      return Bacon.noMore;
     });
   });
 
@@ -125,11 +122,9 @@ describe('#Bacon.Level', function () {
 
       db.get(item.id, function (err, result) {
         expect(err).to.not.exist;
-        expect(result).to.have.property('id', '2')
         expect(result).to.have.property('value', "crazy new test object 2");
         done();
-      })
-      return Bacon.noMore;
+      });
     });
   });
 
