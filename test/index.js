@@ -119,10 +119,21 @@ describe('#Bacon.Level', function () {
     var item = baconLevel.get('2');
     item.put(function (err) {
       expect(err).to.not.exist;
-
       db.get(item.id, function (err, result) {
         expect(err).to.not.exist;
         expect(result).to.have.property('value', "crazy new test object 2");
+        done();
+      });
+    });
+  });
+
+  it('del should delete item model in the db', function (done) {
+    var item = baconLevel.get('2');
+    item.del(function (err) {
+      expect(err).to.not.exist;
+      db.get(item.id, function (err, result) {
+        expect(err).to.exist;
+        expect(result).to.not.exist;
         done();
       });
     });
