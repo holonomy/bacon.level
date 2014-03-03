@@ -1,7 +1,7 @@
 var Bacon = require('bacon.model');
 require('bacon.nodestream');
 
-var Item = require('../item');
+var Model = require('../model');
 var put = require('./put');
 var del = require('./del');
 
@@ -18,33 +18,33 @@ module.exports = function (db) {
       del: new Bacon.Bus(),
     };
 
-    var items = {};
+    var models = {};
     eventStream.onValue(function (data) {
 
       data.db = db;
 
       switch (data.type) {
         case 'put':
-          items = put(data)(items);
-          sink(items);
+          models = put(data)(models);
+          sink(models);
           break;
 
         case 'del':
-          items = del(data)(items);
-          sink(items);
+          models = del(data)(models);
+          sink(models);
           break;
 
         case undefined:
-          items = put(data)(items);
+          models = put(data)(models);
           break;
       }
     });
 
     eventStream.onEnd(function (data) {
-      sink(items);
+      sink(models);
       sink(new Bacon.End());
     });
-    var onSync = function () { sink(items); }
+    var onSync = function () { sink(models); }
     readStream.addListener("sync", onSync);
 
     return function () {

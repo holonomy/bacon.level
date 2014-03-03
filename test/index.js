@@ -11,15 +11,15 @@ var db = level('testdb', { encoding: 'json' });
 liveStream.install(db);
 
 describe('#Bacon.Level', function () {
-  var baconLevel;
+  var collection;
 
-  it('constructor should create a new bacon level', function () {
-    baconLevel = Bacon.Level(db);
-    expect(baconLevel).to.exist;
+  it('Collection should create a new Collection from db', function () {
+    collection = Bacon.Level.Collection(db);
+    expect(collection).to.exist;
   });
 
   it('onValue should get new values', function (done) {
-    baconLevel.onValue(function (values) {
+    collection.onValue(function (values) {
       if (Object.keys(values).length == '2') {
         expect(values['0'].get()).to.deep.equal(fixture['0']);
         expect(values['0'].id).to.equal('0');
@@ -34,7 +34,7 @@ describe('#Bacon.Level', function () {
   });
 
   it('onValue should get existing values', function (done) {
-    baconLevel.onValue(function (values) {
+    collection.onValue(function (values) {
       if (Object.keys(values).length == 2) {
         expect(values['0'].get()).to.deep.equal(fixture['0']);
         expect(values['0'].id).to.equal('0');
@@ -47,7 +47,7 @@ describe('#Bacon.Level', function () {
   });
 
   it('onValue should get even more new values', function (done) {
-    baconLevel.onValue(function (values) {
+    collection.onValue(function (values) {
       if (Object.keys(values).length == 3) {
         expect(values['0'].id).to.equal('0');
         expect(values['0'].get()).to.deep.equal(fixture['0']);
@@ -59,17 +59,17 @@ describe('#Bacon.Level', function () {
         return Bacon.noMore;
       }
     });
-    baconLevel.db.put('2', fixture['2']);
+    collection.db.put('2', fixture['2']);
   });
 
   it('constructor should create another bacon level', function () {
-    baconLevel = Bacon.Level(db);
-    expect(baconLevel).to.exist;
+    collection = Bacon.Level.Collection(db);
+    expect(collection).to.exist;
   });
 
 
   it('onValue should get existing values from last session', function (done) {
-    baconLevel.onValue(function (values) {
+    collection.onValue(function (values) {
       if (Object.keys(values).length == 3) {
         expect(values['0'].get()).to.deep.equal(fixture['0']);
         expect(values['0'].id).to.equal('0');
@@ -84,7 +84,7 @@ describe('#Bacon.Level', function () {
   });
 
   it('get without id should return items', function () {
-    var values = baconLevel.get();
+    var values = collection.get();
     expect(values['0'].get()).to.deep.equal(fixture['0']);
     expect(values['0'].id).to.equal('0');
     expect(values['1'].get()).to.deep.equal(fixture['1']);
@@ -95,7 +95,7 @@ describe('#Bacon.Level', function () {
 
 
   it('get with id should return item model', function (done) {
-    baconLevel.get('2').onValue(function (value) {
+    collection.get('2').onValue(function (value) {
       expect(value).to.have.property('value', "test object 2");
       done();
       return Bacon.noMore;
@@ -103,7 +103,7 @@ describe('#Bacon.Level', function () {
   });
 
   it('set should set item model', function (done) {
-    var item = baconLevel.get('2');
+    var item = collection.get('2');
     var newValue = {
       value: "crazy new test object 2",
     };
@@ -116,7 +116,7 @@ describe('#Bacon.Level', function () {
   });
 
   it('put should persist item model to the db', function (done) {
-    var item = baconLevel.get('2');
+    var item = collection.get('2');
     item.put(function (err) {
       expect(err).to.not.exist;
       db.get(item.id, function (err, result) {
@@ -128,7 +128,7 @@ describe('#Bacon.Level', function () {
   });
 
   it('del should delete item model in the db', function (done) {
-    var item = baconLevel.get('2');
+    var item = collection.get('2');
     item.del(function (err) {
       expect(err).to.not.exist;
       db.get(item.id, function (err, result) {
