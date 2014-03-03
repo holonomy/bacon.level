@@ -9,19 +9,19 @@ Bacon.Level = function (db) {
 
   // store value for sync get
   var value;
-  level.onValue(function (val) {
-    value = val;
+  level.subscribeInternal(function (event) {
+    if (event.hasValue()) {
+      value = event.value();
+    }
   });
 
   // define sync get of value
   // or get item model by id
   level.get = function byId (id) {
     if (!id) { return value; }
-    // TODO optimize
-    return level.flatMap(function (values) {
-      return values[id];
-    });
+    return value[id];
   };
+
   level.db = db;
 
   return level;

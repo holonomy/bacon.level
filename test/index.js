@@ -21,6 +21,10 @@ describe('#Bacon.Level', function () {
   it('onValue should get new values', function (done) {
     baconLevel.onValue(function (values) {
       if (Object.keys(values).length == '2') {
+        expect(values['0'].get()).to.have.property('id', '0');
+        expect(values['0'].get()).to.have.property('value', fixture['0'].value);
+        expect(values['1'].get()).to.have.property('id', '1');
+        expect(values['1'].get()).to.have.property('value', fixture['1'].value);
         done();
         return Bacon.noMore;
       }
@@ -98,6 +102,25 @@ describe('#Bacon.Level', function () {
       return Bacon.noMore;
     });
   });
+
+  it('set should set item model and put should persist it to the db', function (done) {
+    var item = baconLevel.get('2');
+    item.set({
+      value: "crazy new test object 2",
+    });
+    item.put();
+    item.onValue(function (value) {
+      expect(value).to.have.property('id', '2');
+      expect(value).to.have.property('value', "crazy new test object 2");
+
+      db.get(value.id, function (err, result) {
+        expect(err).to.not.exist;
+        expect(result).to.have.property('value', "crazy new test object 2");
+        done();
+      })
+      return Bacon.noMore;
+    });
+  })
 
   after(function (done) {
     // del all objects in db

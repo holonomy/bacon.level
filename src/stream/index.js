@@ -1,7 +1,7 @@
 var Bacon = require('bacon.model');
 require('bacon.nodestream');
 
-var Item = require('./item');
+var Item = require('../item');
 var put = require('./put');
 var del = require('./del');
 
@@ -20,6 +20,8 @@ module.exports = function (db) {
 
     var items = {};
     eventStream.onValue(function (data) {
+
+      data.db = db;
 
       switch (data.type) {
         case 'put':
