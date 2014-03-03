@@ -103,7 +103,7 @@ describe('#Bacon.Level', function () {
     });
   });
 
-  it('set should set item model and put should persist it to the db', function (done) {
+  it('set should set item model', function (done) {
     var item = baconLevel.get('2');
     item.set({
       value: "crazy new test object 2",
@@ -113,14 +113,25 @@ describe('#Bacon.Level', function () {
       expect(value).to.have.property('id', '2');
       expect(value).to.have.property('value', "crazy new test object 2");
 
-      db.get(value.id, function (err, result) {
+      return Bacon.noMore;
+      done();
+    });
+  });
+
+  it('put should persist item model to the db', function (done) {
+    var item = baconLevel.get('2');
+    item.put(function (err) {
+      expect(err).to.not.exist;
+
+      db.get(item.id, function (err, result) {
         expect(err).to.not.exist;
+        expect(result).to.have.property('id', '2')
         expect(result).to.have.property('value', "crazy new test object 2");
         done();
       })
       return Bacon.noMore;
     });
-  })
+  });
 
   after(function (done) {
     // del all objects in db
