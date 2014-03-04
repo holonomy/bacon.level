@@ -13,9 +13,14 @@ liveStream.install(db);
 describe('#Bacon.Level', function () {
   var collection;
 
-  it('Collection should create a new Collection from db', function () {
-    collection = Bacon.Level.Collection(db);
+  it('Collection should create a new Collection from db', function (done) {
+    collection = Bacon.Level.Collection(db)();
     expect(collection).to.exist;
+    collection.onValue(function (value) {
+      expect(value).to.deep.equal([]);
+      done();
+      return Bacon.noMore;
+    });
   });
 
   it('onValue should get new values', function (done) {
@@ -29,8 +34,8 @@ describe('#Bacon.Level', function () {
         return Bacon.noMore;
       }
     });
-    db.put('0', fixture['0']);
-    db.put('1', fixture['1']);
+    collection.db.put('0', fixture['0']);
+    collection.db.put('1', fixture['1']);
   });
 
   it('onValue should get existing values', function (done) {
@@ -49,8 +54,8 @@ describe('#Bacon.Level', function () {
   it('onValue should get even more new values', function (done) {
     collection.onValue(function (values) {
       if (Object.keys(values).length == 3) {
-        expect(values['0'].id).to.equal('0');
         expect(values['0'].get()).to.deep.equal(fixture['0']);
+        expect(values['0'].id).to.equal('0');
         expect(values['1'].get()).to.deep.equal(fixture['1']);
         expect(values['1'].id).to.equal('1');
         expect(values['2'].get()).to.deep.equal(fixture['2']);
@@ -62,8 +67,8 @@ describe('#Bacon.Level', function () {
     collection.db.put('2', fixture['2']);
   });
 
-  it('constructor should create another bacon level', function () {
-    collection = Bacon.Level.Collection(db);
+  it('constructor should create another collection', function () {
+    collection = Bacon.Level.Collection(db)();
     expect(collection).to.exist;
   });
 

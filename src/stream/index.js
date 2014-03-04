@@ -12,6 +12,7 @@ module.exports = function (db) {
     var readStream = createReadStream.call(db);
     var eventStream = Bacon.fromNodeStream(readStream);
 
+    // TODO split changes into buses
     var bus = {
       seed: new Bacon.Bus(),
       put: new Bacon.Bus(),
@@ -20,7 +21,6 @@ module.exports = function (db) {
 
     var models = {};
     eventStream.onValue(function (data) {
-
       data.db = db;
 
       switch (data.type) {
