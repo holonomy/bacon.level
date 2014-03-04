@@ -26,7 +26,7 @@
     "chai": "~1.9.0",
     "mocha": "~1.17.1",
     "level-test": "~1.6.1",
-    "level-live-stream": "~1.4.9",
+    "level-live-stream": "git://github.com/ahdinosaur/level-live-stream",
     "baconjs": "~0.7.6"
   }
 }

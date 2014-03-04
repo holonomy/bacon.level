@@ -8,8 +8,14 @@ var del = require('./del');
 module.exports = function (db) {
   return Bacon.fromBinder(function (sink) {
     
-    var createReadStream = db.createLiveStream || db.createReadStream;
-    var readStream = createReadStream.call(db);
+    var readStream;
+    if (db.createLiveStream) {
+      readStream = db.createLiveStream({
+        notifyOnSync: true
+      });
+    } else {
+      readStream = db.createReadStream();
+    }
     var eventStream = Bacon.fromNodeStream(readStream);
 
     // TODO split changes into buses
@@ -37,6 +43,10 @@ module.exports = function (db) {
         case undefined:
           models = put(data)(models);
           break;
+
+        case 'sync':
+          sink(models);
+          break;
       }
     });
 
@@ -44,11 +54,8 @@ module.exports = function (db) {
       sink(models);
       sink(new Bacon.End());
     });
-    var onSync = function () { sink(models); }
-    readStream.addListener("sync", onSync);
 
     return function () {
-      readStream.removeListener("sync", onSync);
     }
   });
 };
